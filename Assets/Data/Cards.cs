@@ -4,8 +4,8 @@ namespace Assets.Data
 {
     public static class Cards
     {
-        public static Card FastAdvance = new Card("FastAdvance", "**** NBN");
-        public static Card CorporateReshuffle = new Card("CorporateReshuffle", "There is no more use for your department");
-        public static Card KillLaKill = new Card("KillLaKill", "What part of that scene was necessary?");
+        public static CardModel FastAdvance = new CardModel("FastAdvance", "**** NBN");
+        public static CardModel CorporateReshuffle = new CardModel("CorporateReshuffle", "There is no more use for your department");
+        public static CardModel KillLaKill = new CardModel("KillLaKill", "What part of that scene was necessary?");
     }
 }

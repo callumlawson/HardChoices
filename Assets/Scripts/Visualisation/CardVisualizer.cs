@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Visualisation
 {
-    public class CardVisualizer : CustomMonoBehaviour, IObserver, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    public class CardVisualizer : CustomMonoBehaviour, IObserver<CardModel>, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         public Text CardTitle;
         public Text CardDescription;
@@ -14,13 +14,12 @@ namespace Assets.Scripts.Visualisation
         public bool BeingMousedOver;
 
         private Canvas Canvas;
-        private Card Card;
+        private CardModel Card;
         private int SortOrder;
 
-        public void Init(Card card)
+        public void Init(CardModel card)
         {
             Canvas = GetComponent<Canvas>();
-            Card = card;
             card.Updated += OnDataSourceUpdated;
             OnDataSourceUpdated(card);
         }
@@ -31,13 +30,13 @@ namespace Assets.Scripts.Visualisation
             Canvas.sortingOrder = SortOrder;
         }
 
-        public void OnDataSourceUpdated(IObservable dataSource)
+        public void OnDataSourceUpdated(CardModel dataSource)
         {
-            var card = dataSource as Card;
-            if (card != null)
+            Card = dataSource;
+            if (Card != null)
             {
-                CardTitle.text = card.Title;
-                CardDescription.text = card.Description;
+                CardTitle.text = Card.Title;
+                CardDescription.text = Card.Description;
             }
         }
 
@@ -57,7 +56,7 @@ namespace Assets.Scripts.Visualisation
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Player.Instance.PlayCard(Card);
+           GameWorld.Instance.CardActivated(Card);
         }
     }
 }

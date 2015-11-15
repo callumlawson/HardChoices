@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.Models;
 using UnityEngine;
 
 namespace Assets.Scripts.Visualisation
@@ -11,15 +12,14 @@ namespace Assets.Scripts.Visualisation
         private List<GameObject> Cards;
         private RectTransform RectTransform;
 
-        public void Start()
+        public void Awake()
         {
             RectTransform = GetComponent<RectTransform>();
             Cards = new List<GameObject>();
         }
 
-        public override void OnDataSourceUpdated(IObservable dataSource)
+        public override void OnDataSourceUpdated(DeckModel deck)
         {
-            var deck = dataSource as Deck;
             ClearCards();
             CreateCards(deck);
             PositionCards();
@@ -34,7 +34,7 @@ namespace Assets.Scripts.Visualisation
             Cards.Clear();
         }
 
-        private void CreateCards(Deck deck)
+        private void CreateCards(DeckModel deck)
         {
             foreach (var card in deck.Cards)
             {

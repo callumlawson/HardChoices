@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using Assets.Scripts;
 using Assets.Scripts.Labels;
+using Assets.Scripts.Models;
+using Assets.Scripts.Util.Immutable;
 
 namespace Assets.Data
 {
     [Serializable]
     public static class InitalConditions
     {
-        private static readonly List<Card> StarterCards = new List<Card>
+        private static readonly List<CardModel> StarterCards = new List<CardModel>
         {
             Cards.FastAdvance,
             Cards.FastAdvance,
@@ -27,8 +29,8 @@ namespace Assets.Data
             Cards.KillLaKill
         };
 
-        public static readonly Deck HandDeck = new Deck(new Queue<Card>(), DeckType.Hand);
-        public static readonly Deck DiscardDeck = new Deck(new Queue<Card>(), DeckType.Discard);
-        public static readonly Deck DrawDeck = new Deck(new Queue<Card>(StarterCards), DeckType.Draw);
+        public static readonly DeckModel HandDeck = new DeckModel(new ImmutableQueue<CardModel>(), DeckType.Hand);
+        public static readonly DeckModel DiscardDeck = new DeckModel(new ImmutableQueue<CardModel>(), DeckType.Discard);
+        public static readonly DeckModel DrawDeck = new DeckModel(ImmutableQueue.Create<CardModel>(StarterCards), DeckType.Draw);
     }
 }

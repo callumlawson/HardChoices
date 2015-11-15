@@ -1,6 +1,9 @@
 ﻿using System;
 
-public interface IObservable
+namespace Assets.Scripts.Util
 {
-    event Action<IObservable> Updated;
+    public interface IObservable<T>
+    {
+        event Action<T> Updated;
+    }
 }

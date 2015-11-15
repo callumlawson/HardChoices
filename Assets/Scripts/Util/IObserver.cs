@@ -1,4 +1,7 @@
-﻿interface IObserver
+﻿namespace Assets.Scripts.Util
 {
-    void OnDataSourceUpdated(IObservable dataSource);
+    interface IObserver<in T>
+    {
+        void OnDataSourceUpdated(T dataSource);
+    }
 }
