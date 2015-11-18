@@ -1,31 +1,29 @@
-﻿using Assets.Scripts.Models;
-
-namespace Assets.Scripts.Controller
+﻿namespace Assets.Scripts.Controller
 {
     internal class DeckController
     {
-        private readonly DeckModel Deck;
-
-        public DeckController(DeckModel deck)
-        {
-            Deck = deck;
-        }
-
-        public void Draw(DeckController deckToDrawTo)
-        {
-            deckToDrawTo.AddCard(RemoveCard());
-        }
-
-        public CardModel RemoveCard()
-        {
-            CardModel card;
-            Deck.Cards = Deck.Cards.Dequeue(out card);
-            return card;
-        }
-
-        public void AddCard(CardModel card)
-        {
-            Deck.Cards = Deck.Cards.Enqueue(card);
-        }
+//        private readonly EventModel Event;
+//
+//        public DeckController(EventModel @event)
+//        {
+//            Event = @event;
+//        }
+//
+//        public void Draw(DeckController deckToDrawTo)
+//        {
+//            deckToDrawTo.AddCard(RemoveCard());
+//        }
+//
+//        public AgentModel RemoveCard()
+//        {
+//            AgentModel agent;
+//            Event.Cards = Event.Cards.Dequeue(out agent);
+//            return agent;
+//        }
+//
+//        public void AddCard(AgentModel agent)
+//        {
+//            Event.Cards = Event.Cards.Enqueue(agent);
+//        }
     }
 }
