@@ -29,5 +29,10 @@ namespace Assets.Scripts
 //
 //            Debug.Log(agents.ToString());
         }
+
+        public void ButtonTest()
+        {
+            Debug.Log("It lives!");
+        }
     }
 }

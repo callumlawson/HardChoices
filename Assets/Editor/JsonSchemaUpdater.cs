@@ -10,12 +10,12 @@ using System.Reflection;
 using Newtonsoft.Json.Converters;
 
 //TODO: use File and Path.
-public class CustomTools
+public class JsonSchemaUpdater
 {
     private const string ModelNamespace = "Assets.Scripts.Models";
     private const string GuidKeyName = "Guid";
     private const string DataFolderPath = "Assets/Resources/Data/";
-    private static readonly MethodInfo UpdateSchemaMethod = typeof (CustomTools).GetMethod("UpdateSchema");
+    private static readonly MethodInfo UpdateSchemaMethod = typeof (JsonSchemaUpdater).GetMethod("UpdateSchema");
 
     [MenuItem("Tools/Update JSON Schema")]
     public static void UpdateJsonSchema()

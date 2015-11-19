@@ -1,0 +1,12 @@
+-- defines a factorial function
+function predicate()
+    return isTrue
+end
+
+function onResolve()
+    print("Testing testing")
+end
+
+function afterResolve()
+    
+end
