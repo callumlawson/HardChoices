@@ -1,0 +1,7 @@
+[
+  {
+    "Name": "TestScript",
+    "Predicate": "return isTrue",
+    "Resolution": "print('Testing testing')"
+  }
+]

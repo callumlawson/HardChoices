@@ -8,7 +8,6 @@ public class EventScriptLoader
     [MenuItem("Tools/Load Event Scripts")]
     public static void LoadEventScripts()
     {
-        Script.DefaultOptions.DebugPrint = message => Debug.Log(message);
         try
         {
             var script = new Script();
