@@ -1,0 +1,36 @@
+[
+  {
+    "Name": "An inconsequential choice",
+    "Description": "You are thirsty and are dying for a drink. There are two off licenses to choose from. Which do you fancy?",
+    "EventOptions": [
+      {
+        "Description": "The one with the guy who is always starting at the TV.",
+        "Resolution": "TriggerEvent('An unfortunate result')"
+      },
+      {
+        "Description": "The where you always feel like you are being watched.",
+        "Resolution": "TriggerEvent('That went ok')"
+      }
+    ]
+  },
+  {
+    "Name": "An unfortunate result",
+    "Description": "You are murdered to death and kind of regret it.",
+    "EventOptions": [
+      {
+        "Description": "Play again?",
+        "Resolution": "TriggerEvent('An inconsequential choice')"
+      }
+    ]
+  },
+  {
+    "Name": "That went ok",
+    "Description": "You buy your booze and live a happy and contented life. You cant help but feel that choice was more important that it appeared.",
+    "EventOptions": [
+      {
+        "Description": "Play again?",
+        "Resolution": "TriggerEvent('An inconsequential choice')"
+      }
+    ]
+  }
+]

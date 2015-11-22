@@ -14,12 +14,7 @@ public class JsonSchemaUpdater
     [MenuItem("Tools/Update JSON Schema")]
     public static void UpdateJsonSchema()
     {
-        var modelTypes = JsonIo.GetModelTypes();
-        foreach (var modelType in modelTypes)
-        {
-            var typedUpdateSchemaMethod = UpdateSchemaMethod.MakeGenericMethod(modelType);
-            typedUpdateSchemaMethod.Invoke(null, null);
-        }
+        JsonIo.CallMethodWithModelTypes(null, UpdateSchemaMethod);
     }
 
     public static void UpdateSchema<T>() where T : ObjectModel<T>, new()

@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Models;
 using Assets.Scripts.Util;
+using Assets.Scripts.Visualisation;
+using JetBrains.Annotations;
 using MoonSharp.Interpreter;
 using UnityEngine;
 
@@ -16,41 +20,57 @@ namespace Assets.Scripts
     public class RafGameWorld : CustomMonoBehaviour
     {
         public static RafGameWorld Instance;
+        public EventVisualizer EventVisualizer;
+        public List<IObjectModel> World;
 
-        public List<BaseObject> World;
-
+        private Script luaScriptContext;
         private static readonly MethodInfo LoadGameDataMethod = typeof(RafGameWorld).GetMethod("LoadGameData");
 
         public void Start()
         {
-            Script.DefaultOptions.DebugPrint = Debug.Log;
-
+            SetupLuaScriptContext();
             Instance = this;
-            World = new List<BaseObject>();
-            InitaliseGameWorld();
-
-            RunScriptTest();
+            World = new List<IObjectModel>();
+            TriggerEvent("Start");
         }
 
-        private void RunScriptTest()
+        public void TriggerEvent(string eventName)
         {
-            
+            ReloadGameData();
+            var eventModel = World.Find(model => model.Name == eventName);
+            var gameEvent = eventModel as GameEvent;
+            EventVisualizer.Init(gameEvent);
         }
 
-        private void InitaliseGameWorld()
+        public void RunScript(string luaScript)
         {
-            var modelTypes = JsonIo.GetModelTypes();
-            foreach (var modelType in modelTypes)
+            try
             {
-                var typedUpdateSchemaMethod = LoadGameDataMethod.MakeGenericMethod(modelType);
-                typedUpdateSchemaMethod.Invoke(this, null);
+                luaScriptContext.DoString(luaScript);
             }
+            catch (ScriptRuntimeException ex)
+            {
+                Debug.LogError("Doh! An error occured! " + ex.DecoratedMessage);
+            }
+        }
+
+        private void ReloadGameData()
+        {
+            World.Clear();
+            JsonIo.CallMethodWithModelTypes(this, LoadGameDataMethod);
         }
 
         public void LoadGameData<T>() where T : ObjectModel<T>, new()
         {
-            var objectModels = JsonIo.GetModelsFromFile<T>().Cast<BaseObject>();
+            var objectModels = JsonIo.GetModelsFromFile<T>().Cast<IObjectModel>();
             World.AddRange(objectModels);
+        }
+
+        private void SetupLuaScriptContext()
+        {
+            Script.DefaultOptions.DebugPrint = Debug.Log;
+            luaScriptContext = new Script();
+            luaScriptContext.Globals["TriggerEvent"] = (Action<string>)TriggerEvent;
         }
     }
 }
