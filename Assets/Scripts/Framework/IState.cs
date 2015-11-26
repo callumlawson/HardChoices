@@ -1,6 +1,6 @@
-﻿namespace Assets.Scripts.Util
+﻿namespace Assets.Scripts.Framework
 {
-    public interface IObjectModel
+    public interface IState
     {
         string Name
         {

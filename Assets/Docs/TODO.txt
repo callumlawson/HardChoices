@@ -1,0 +1,4 @@
+﻿TODO!:
+ - Make branch in GIT. DONE
+ - Load scripts independently of JSON.
+ - Move to dynamic use of JSON. No more models.

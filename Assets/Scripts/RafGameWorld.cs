@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Assets.Scripts.Models;
+using Assets.Scripts.Framework;
+using Assets.Scripts.States;
 using Assets.Scripts.Util;
 using Assets.Scripts.Visualisation;
-using JetBrains.Annotations;
 using MoonSharp.Interpreter;
 using UnityEngine;
 
@@ -21,7 +21,7 @@ namespace Assets.Scripts
     {
         public static RafGameWorld Instance;
         public EventVisualizer EventVisualizer;
-        public List<IObjectModel> World;
+        public List<IState> World;
 
         private Script luaScriptContext;
         private static readonly MethodInfo LoadGameDataMethod = typeof(RafGameWorld).GetMethod("LoadGameData");
@@ -30,16 +30,15 @@ namespace Assets.Scripts
         {
             SetupLuaScriptContext();
             Instance = this;
-            World = new List<IObjectModel>();
+            World = new List<IState>();
             TriggerEvent("Start");
         }
 
         public void TriggerEvent(string eventName)
         {
             ReloadGameData();
-            var eventModel = World.Find(model => model.Name == eventName);
-            var gameEvent = eventModel as GameEvent;
-            EventVisualizer.Init(gameEvent);
+            var eventModel = World.Find(model => model.Name == eventName) as GameEvent;
+            EventVisualizer.Init(eventModel);
         }
 
         public void RunScript(string luaScript)
@@ -62,7 +61,7 @@ namespace Assets.Scripts
 
         public void LoadGameData<T>() where T : ObjectModel<T>, new()
         {
-            var objectModels = JsonIo.GetModelsFromFile<T>().Cast<IObjectModel>();
+            var objectModels = JsonIo.GetModelsFromFile<T>().Cast<IState>();
             World.AddRange(objectModels);
         }
 

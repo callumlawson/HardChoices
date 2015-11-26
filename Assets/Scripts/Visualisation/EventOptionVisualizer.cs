@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Models;
+﻿using Assets.Scripts.States;
 using Assets.Scripts.Util;
 using UnityEngine.UI;
 
