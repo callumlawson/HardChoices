@@ -7,27 +7,26 @@ using Assets.Scripts.Util;
 
 public class JsonSchemaUpdater
 {
+    private static readonly MethodInfo UpdateSchemaMethod = typeof(JsonSchemaUpdater).GetMethod("UpdateSchema");
     private const string GuidKeyName = "Guid";
-
-    private static readonly MethodInfo UpdateSchemaMethod = typeof (JsonSchemaUpdater).GetMethod("UpdateSchema");
 
     [MenuItem("Tools/Update JSON Schema")]
     public static void UpdateJsonSchema()
     {
-        JsonIo.CallMethodWithModelTypes(null, UpdateSchemaMethod);
+        JsonIo.CallMethodWithTemplateTypes(UpdateSchemaMethod);
     }
 
-    public static void UpdateSchema<T>() where T : ObjectModel<T>, new()
+    public static void UpdateSchema<T>() where T : new()
     {
-        var modelObjects = GetModelsWithDefaultIfNone<T>();
+        var modelObjects = GetTempaltesWithDefaultIfNone<T>();
         var reJsonedModels = JsonConvert.SerializeObject(modelObjects, Formatting.Indented, JsonIo.GetSerializerSettings());
-        var sanitisedJson = StipOutGuids(reJsonedModels);
-        JsonIo.SaveJson<T>(sanitisedJson);
+//        var sanitisedJson = StipOutGuids(reJsonedModels);
+        JsonIo.SaveJson<T>(reJsonedModels);
     }
 
-    private static List<T> GetModelsWithDefaultIfNone<T>() where T : ObjectModel<T>, new()
+    private static List<T> GetTempaltesWithDefaultIfNone<T>() where T : new()
     {
-        var modelObjects = JsonIo.GetModelsFromFile<T>();
+        var modelObjects = JsonIo.GetTemplatesFromFile<T>();
         if (modelObjects.Count == 0)
         {
             modelObjects = new List<T> {new T()};

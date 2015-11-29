@@ -1,10 +1,22 @@
-﻿using Assets.Scripts.Util;
-using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Scripts.Framework
 {
-    class Entity : IEntity
+    public class Entity
     {
-        public GUID EntityGuid;
+        public Guid EntityGuid;
+        public List<EntityComponent> EntityComponents;
+
+        public Entity()
+        {
+            EntityGuid = new Guid();
+        }
+
+        public EntityComponent GetComponent<T>()
+        {
+            return EntityComponents.First(component => component.GetType() == typeof (T));
+        }
     }
 }

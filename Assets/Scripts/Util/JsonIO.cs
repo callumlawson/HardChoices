@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Policy;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
 
@@ -13,45 +11,52 @@ namespace Assets.Scripts.Util
 {
     public static class JsonIo
     {
-        private const string ModelNamespace = "Assets.Scripts.Models";
+        private const string TemplateNamespace = "Assets.Scripts.EntityTemplates";
 
-        public static IEnumerable<Type> GetModelTypes()
+        public static void CallMethodWithTemplateTypes(MethodInfo methodToCall)
         {
-            var modelTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(t => t.GetTypes())
-                .Where(t => t.IsClass && !t.IsNested && t.Namespace == ModelNamespace);
-            return modelTypes;
+            CallMethodWithTemplateTypes(null, methodToCall);
         }
 
-        public static void CallMethodWithModelTypes(System.Object context, MethodInfo methodToCall)
+        public static void CallMethodWithTemplateTypes(object context, MethodInfo methodToCall)
         {
-            var modelTypes = GetModelTypes();
-            foreach (var modelType in modelTypes)
+            var templateTypes = GetTemplateTypes();
+            foreach (var templateType in templateTypes)
             {
-                var typedUpdateSchemaMethod = methodToCall.MakeGenericMethod(modelType);
+                var typedUpdateSchemaMethod = methodToCall.MakeGenericMethod(templateType);
                 typedUpdateSchemaMethod.Invoke(context, null);
             }
         }
 
-        public static List<T> GetModelsFromFile<T>() where T : ObjectModel<T>, new()
+        public static List<T> GetTemplatesFromFile<T>() where T : new()
         {
-            var modelJsonString = LoadJson<T>();
-            return GetModelsFromString<T>(modelJsonString);
+            var templateJsonString = LoadJson<T>();
+            return GetTempaltesFromJson<T>(templateJsonString);
         }
 
-        public static List<T> GetModelsFromString<T>(string modelJson) where T : ObjectModel<T>, new()
+        public static List<T> GetTempaltesFromJson<T>(string json) where T : new()
         {
-            if (modelJson == "")
+            if (string.IsNullOrEmpty(json))
             {
                 return new List<T>();
             }
-            return JsonConvert.DeserializeObject<List<T>>(modelJson);
+            return JsonConvert.DeserializeObject<List<T>>(json);
         }
 
-        //Make into save models
-        public static void SaveJson<T>(JArray json)
+        public static void SaveJson<T>(string json)
         {
-            using (var fs = new FileStream(GetPathForModelName(typeof(T).Name), FileMode.Create))
+            SaveJson(typeof(T).Name, json);
+        }
+
+        public static void SaveObjectAsJsonFile(string fileName, object gameObject)
+        {
+            var json = JsonConvert.SerializeObject(gameObject, Formatting.Indented, GetSerializerSettings());
+            SaveJson(fileName, json);
+        }
+
+        public static void SaveJson(string fileName, string json)
+        {
+            using (var fs = new FileStream(GetPathForFileName(fileName), FileMode.Create))
             {
                 using (var writer = new StreamWriter(fs))
                 {
@@ -62,13 +67,19 @@ namespace Assets.Scripts.Util
 
         public static string LoadJson<T>()
         {
-            var modelName = typeof(T).Name;
-            using (var fs = new FileStream(GetPathForModelName(typeof(T).Name), FileMode.Open))
+            try
             {
-                using (var reader = new StreamReader(fs))
+                using (var fs = new FileStream(GetPathForFileName(typeof(T).Name), FileMode.Open))
                 {
-                    return reader.ReadToEnd();
+                    using (var reader = new StreamReader(fs))
+                    {
+                        return reader.ReadToEnd();
+                    }
                 }
+            }
+            catch (FileNotFoundException)
+            {
+                return null;
             }
         }
 
@@ -76,7 +87,10 @@ namespace Assets.Scripts.Util
         {
             var jsonSettings = new JsonSerializerSettings
             {
-                DefaultValueHandling = DefaultValueHandling.Include
+                TypeNameHandling = TypeNameHandling.Auto,
+                DefaultValueHandling = DefaultValueHandling.Populate,
+                NullValueHandling = NullValueHandling.Include,
+                TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple
             };
 
             jsonSettings.Converters.Add(new StringEnumConverter { CamelCaseText = false });
@@ -84,9 +98,17 @@ namespace Assets.Scripts.Util
             return jsonSettings;
         }
 
-        private static string GetPathForModelName(string modelName)
+        private static IEnumerable<Type> GetTemplateTypes()
         {
-            return string.Format("{0}/{1}.json", Application.streamingAssetsPath, modelName);
+            var templateTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(t => t.GetTypes())
+                .Where(t => t.IsClass && t.Namespace == TemplateNamespace);
+            return templateTypes;
+        }
+
+        private static string GetPathForFileName(string fileName)
+        {
+            return string.Format("{0}/{1}.json", Application.streamingAssetsPath, fileName);
         }
     }
 }

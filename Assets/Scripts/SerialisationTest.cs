@@ -19,7 +19,7 @@ namespace Assets.Scripts
 //                    writer.Write(JsonConvert.SerializeObject(testAgents));
 //                }
 //            }
-
+//
 //            var agentsData = Resources.Load<TextAsset>("Data/Agents");
 //
 //            Debug.Log(agentsData.text);
